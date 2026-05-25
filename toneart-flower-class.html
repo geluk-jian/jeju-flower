@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>toneart — Flower Class</title>
+<meta name="description" content="회화를 전공한 플로리스트가 운영하는, 톤아트의 플라워 클래스. 정규반 · 원데이 · 비즈니스 · 출강.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Italiana&family=IBM+Plex+Mono:wght@300;400&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root {
+  --bg:        #f4eee2;
+  --bg-2:      #ebe2cf;
+  --bg-3:      #2b2a25;
+  --ink:       #1c1a16;
+  --ink-2:     #514a3d;
+  --ink-3:     #8a8273;
+  --line:      rgba(28,26,22,0.14);
+
+  --moss:      #5a6b4a;
+  --moss-deep: #3e4a32;
+  --clay:      #a85d44;
+  --clay-deep: #7d4231;
+}
+
+* { margin:0; padding:0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+.italiana { font-family: 'Italiana', serif; }
+.cormorant { font-family: 'Cormorant Garamond', serif; }
+.myeongjo  { font-family: 'Nanum Myeongjo', serif; }
+.mono      { font-family: 'IBM Plex Mono', monospace; }
+
+/* Paper grain */
+body::before {
+  content:''; position: fixed; inset: 0; pointer-events: none; z-index: 1000;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  opacity: 0.075;
+  mix-blend-mode: multiply;
+}
+
+/* ============ NAV ============ */
+.nav {
+  position: fixed; top:0; left:0; right:0;
+  padding: 22px 40px;
+  display: flex; justify-content: space-between; align-items: center;
+  z-index: 100;
+  background: linear-gradient(to bottom, rgba(244,238,226,0.92), rgba(244,238,226,0));
+  backdrop-filter: blur(8px);
+}
+.nav__logo {
+  font-family: 'Italiana', serif;
+  font-size: 26px;
+  letter-spacing: 0.04em;
+}
+.nav__logo small {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  margin-left: 8px;
+  vertical-align: 6px;
+  color: var(--ink-3);
+}
+.nav__links {
+  display: flex; gap: 32px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-style: italic;
+  color: var(--ink-2);
+}
+.nav__links a { transition: color .3s; }
+.nav__links a:hover { color: var(--moss-deep); }
+.nav__cta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--ink);
+  transition: color .3s;
+}
+.nav__cta:hover { color: var(--clay); border-color: var(--clay); }
+
+/* ============ HERO ============ */
+.hero {
+  min-height: 100vh;
+  padding: 130px 40px 60px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 60px;
+  align-items: end;
+}
+.hero__topbar {
+  position: absolute;
+  top: 110px; left: 40px; right: 40px;
+  display: flex; justify-content: space-between;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-3);
+}
+.hero__title {
+  font-family: 'Italiana', serif;
+  font-size: clamp(72px, 16vw, 280px);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+}
+.hero__title .row {
+  display: block;
+}
+.hero__title .row.right { text-align: right; padding-right: 12px; }
+.hero__title .amp {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--clay);
+  font-size: 0.85em;
+  font-weight: 300;
+  vertical-align: 0.05em;
+  margin: 0 0.06em;
+}
+.hero__title .small {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.18em;
+  color: var(--moss-deep);
+  letter-spacing: 0.04em;
+  margin-top: 18px;
+  font-weight: 400;
+}
+
+.hero__right {
+  position: relative;
+  display: flex; flex-direction: column;
+  gap: 32px;
+  padding-bottom: 8px;
+}
+.hero__plate {
+  aspect-ratio: 3/4;
+  position: relative;
+  background:
+    radial-gradient(ellipse at 35% 40%, rgba(168,93,68,0.35), transparent 60%),
+    radial-gradient(ellipse at 70% 70%, rgba(90,107,74,0.28), transparent 55%),
+    linear-gradient(160deg, var(--bg-2) 0%, #c9bda0 100%);
+  overflow: hidden;
+}
+.hero__plate svg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+}
+.hero__plate__caption {
+  position: absolute;
+  bottom: 16px; left: 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--ink-2);
+  text-transform: uppercase;
+}
+.hero__lead {
+  font-family: 'Nanum Myeongjo', serif;
+  font-size: 16.5px;
+  line-height: 1.85;
+  color: var(--ink);
+  max-width: 360px;
+}
+.hero__lead strong { color: var(--moss-deep); font-weight: 800; }
+
+/* hero bottom meta */
+.hero__meta {
+  grid-column: 1 / -1;
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+.meta-item__label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 6px;
+}
+.meta-item__value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  letter-spacing: -0.005em;
+}
+.meta-item__value em {
+  font-family: 'Italiana', serif;
+  font-style: normal;
+  font-size: 28px;
+  color: var(--clay);
+  margin-right: 4px;
+}
+
+/* ============ STILL LIFE BAND ============ */
+.band {
+  background: var(--bg-3);
+  color: var(--bg);
+  padding: 80px 40px;
+  position: relative;
+}
+.band__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.band__quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(28px, 3.8vw, 52px);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.band__quote em {
+  font-style: normal;
+  font-family: 'Italiana', serif;
+  color: #d4b896;
+}
+.band__byline {
+  font-family: 'Nanum Myeongjo', serif;
+  font-size: 16px;
+  line-height: 1.85;
+  color: rgba(244,238,226,0.85);
+}
+.band__byline::before {
+  content: '';
+  display: block;
+  width: 36px; height: 1px;
+  background: #d4b896;
+  margin-bottom: 20px;
+}
+
+/* ============ SECTION BASE ============ */
+section { padding: 130px 40px; position: relative; }
+.section-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--ink-3);
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 28px;
+}
+.section-tag::before {
+  content: ''; width: 28px; height: 1px; background: var(--clay);
+}
+.section-title {
+  font-family: 'Italiana', serif;
+  font-size: clamp(44px, 8vw, 130px);
+  line-height: 0.95;
+  letter-spacing: -0.005em;
+  max-width: 1100px;
+}
+.section-title em {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--clay);
+  letter-spacing: -0.01em;
+}
+
+/* ============ ABOUT ============ */
+.about__wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  max-width: 1400px;
+  margin: 70px auto 0;
+  align-items: start;
+}
+.about__visual {
+  aspect-ratio: 4/5;
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(126,108,80,0.45), transparent 55%),
+    radial-gradient(ellipse at 70% 75%, rgba(60,75,50,0.4), transparent 50%),
+    linear-gradient(180deg, #d8c9a8 0%, #b9a986 100%);
+  position: sticky;
+  top: 100px;
+  overflow: hidden;
+}
+.about__visual::after {
+  content: '01';
+  position: absolute;
+  top: 20px; right: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+  background: rgba(244,238,226,0.8);
+  padding: 4px 8px;
+}
+.about__text {
+  font-family: 'Nanum Myeongjo', serif;
+  font-size: 18px;
+  line-height: 1.85;
+  color: var(--ink);
+}
+.about__text p + p { margin-top: 22px; }
+.about__text .pull {
+  display: block;
+  margin: 36px 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 28px;
+  line-height: 1.45;
+  color: var(--moss-deep);
+  padding-left: 24px;
+  border-left: 1px solid var(--moss);
+}
+.about__credentials {
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.cred__num {
+  font-family: 'Italiana', serif;
+  font-size: 52px;
+  line-height: 1;
+  color: var(--clay);
+}
+.cred__label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-top: 8px;
+}
+
+/* ============ CLASSES ============ */
+.classes { background: var(--bg-2); }
+
+.classes__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 90px;
+  max-width: 1400px;
+}
+.class-card {
+  background: var(--bg);
+  padding: 44px 40px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 460px;
+  transition: transform .4s ease;
+  border: 1px solid var(--line);
+}
+.class-card:hover { transform: translateY(-4px); }
+.class-card__num {
+  font-family: 'Italiana', serif;
+  font-size: 96px;
+  line-height: 0.85;
+  color: var(--moss);
+  position: absolute;
+  top: 28px; right: 32px;
+  opacity: 0.95;
+}
+.class-card__kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--clay);
+  margin-bottom: 14px;
+}
+.class-card__title {
+  font-family: 'Italiana', serif;
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 6px;
+  letter-spacing: -0.005em;
+}
+.class-card__title-kr {
+  font-family: 'Nanum Myeongjo', serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  margin-bottom: 22px;
+}
+.class-card__desc {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: var(--ink-2);
+  margin-bottom: 24px;
+}
+.class-card__meta {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.meta-cell__label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-3);
+  margin-bottom: 4px;
+}
+.meta-cell__value {
+  font-family: 'Nanum Myeongjo', serif;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.class-card__cta {
+  margin-top: 24px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--moss-deep);
+  border-bottom: 1px solid var(--moss-deep);
+  padding-bottom: 4px;
+  align-self: flex-start;
+  transition: gap .3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.class-card__cta:hover { gap: 12px; color: var(--clay); border-color: var(--clay); }
+
+/* ============ CURRICULUM ============ */
+.curriculum__intro {
+  max-width: 1400px;
+}
+.curriculum__head {
+  display: flex; justify-content: space-between; align-items: end;
+  gap: 40px;
+  margin-bottom: 60px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--ink);
+}
+.curriculum__sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 22px;
+  color: var(--ink-2);
+  max-width: 400px;
+  flex-shrink: 0;
+}
+
+.weeks {
+  display: grid;
+  grid-template-columns: 1fr;
+  max-width: 1400px;
+}
+.week {
+  display: grid;
+  grid-template-columns: 100px 1fr 1.6fr 200px;
+  gap: 40px;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+  transition: background .3s;
+}
+.week:hover { background: rgba(168,93,68,0.04); }
+.week__num {
+  font-family: 'Italiana', serif;
+  font-size: 56px;
+  line-height: 0.9;
+  color: var(--moss-deep);
+}
+.week__num span {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.week__title {
+  font-family: 'Nanum Myeongjo', serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+.week__title em {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 17px;
+  color: var(--clay);
+  margin-top: 6px;
+  letter-spacing: 0;
+}
+.week__desc {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.week__tag {
+  text-align: right;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-3);
+}
+
+/* ============ INSTRUCTOR ============ */
+.instructor {
+  background: var(--bg-3);
+  color: var(--bg);
+}
+.instructor .section-tag { color: rgba(244,238,226,0.55); }
+.instructor .section-tag::before { background: var(--clay); }
+.instructor .section-title em { color: #d4b896; }
+
+.inst__wrap {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr;
+  gap: 80px;
+  max-width: 1400px;
+  margin: 90px auto 0;
+  align-items: start;
+}
+.inst__visual {
+  aspect-ratio: 3/4;
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(168,93,68,0.45), transparent 55%),
+    linear-gradient(180deg, #4a4337 0%, #2b2520 100%);
+  position: relative;
+  overflow: hidden;
+}
+.inst__visual::after {
+  content: 'PORTRAIT';
+  position: absolute;
+  bottom: 18px; left: 18px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: rgba(244,238,226,0.5);
+}
+.inst__name {
+  font-family: 'Italiana', serif;
+  font-size: 88px;
+  line-height: 0.9;
+  letter-spacing: -0.005em;
+  margin-bottom: 8px;
+}
+.inst__role {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 22px;
+  color: #d4b896;
+  margin-bottom: 36px;
+}
+.inst__bio {
+  font-family: 'Nanum Myeongjo', serif;
+  font-size: 17px;
+  line-height: 1.9;
+  color: rgba(244,238,226,0.92);
+}
+.inst__bio p + p { margin-top: 18px; }
+.inst__history {
+  margin-top: 44px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(244,238,226,0.15);
+}
+.hist-item {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 28px;
+  padding: 12px 0;
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+.hist-item__year {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: #d4b896;
+}
+.hist-item__text {
+  font-family: 'Pretendard', sans-serif;
+  color: rgba(244,238,226,0.85);
+}
+
+/* ============ GALLERY ============ */
+.gallery__head {
+  display: flex; justify-content: space-between; align-items: end;
+  margin-bottom: 60px;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.gallery__caption {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 20px;
+  color: var(--ink-2);
+  max-width: 400px;
+}
+.gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: 90px;
+  gap: 16px;
+  max-width: 1500px;
+}
+.tile {
+  position: relative;
+  overflow: hidden;
+}
+.tile__caption {
+  position: absolute;
+  bottom: 12px; left: 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: var(--bg);
+  background: rgba(28,26,22,0.6);
+  padding: 3px 8px;
+  text-transform: uppercase;
+}
+.tile-1 {
+  grid-column: span 5; grid-row: span 4;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(168,93,68,0.55), transparent 55%),
+    linear-gradient(160deg, #c9bda0 0%, #8a7e5e 100%);
+}
+.tile-2 {
+  grid-column: span 4; grid-row: span 4;
+  background:
+    radial-gradient(ellipse at 60% 30%, rgba(90,107,74,0.5), transparent 60%),
+    linear-gradient(180deg, #d3c8aa 0%, #6a7252 100%);
+}
+.tile-3 {
+  grid-column: span 3; grid-row: span 4;
+  background:
+    radial-gradient(ellipse at 50% 60%, rgba(125,66,49,0.55), transparent 60%),
+    linear-gradient(180deg, #b8a786 0%, #4e3c2e 100%);
+}
+.tile-4 {
+  grid-column: span 3; grid-row: span 3;
+  background:
+    linear-gradient(180deg, #d8c9a8 0%, #a59279 100%);
+}
+.tile-5 {
+  grid-column: span 6; grid-row: span 3;
+  background:
+    radial-gradient(ellipse at 70% 50%, rgba(60,75,50,0.45), transparent 60%),
+    linear-gradient(180deg, #c4b899 0%, #7e8462 100%);
+}
+.tile-6 {
+  grid-column: span 3; grid-row: span 3;
+  background:
+    radial-gradient(ellipse at 40% 50%, rgba(168,93,68,0.4), transparent 60%),
+    linear-gradient(180deg, #d4c5a4 0%, #9a7d63 100%);
+}
+
+/* ============ TUITION ============ */
+.tuition { background: var(--bg-2); }
+.tuition__intro {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 60px;
+  margin-bottom: 80px;
+  max-width: 1400px;
+  align-items: end;
+}
+.tuition__note {
+  font-family: 'Nanum Myeongjo', serif;
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--ink-2);
+  padding-left: 24px;
+  border-left: 1px solid var(--clay);
+}
+.tuition__note strong { color: var(--ink); font-weight: 700; }
+.tuition__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  max-width: 1400px;
+}
+.tuition__col {
+  padding: 40px 32px;
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column;
+}
+.tuition__col:last-child { border-right: none; }
+.tcol__kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: 14px;
+}
+.tcol__title {
+  font-family: 'Italiana', serif;
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.tcol__title-kr {
+  font-family: 'Nanum Myeongjo', serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink-2);
+  margin-bottom: 28px;
+}
+.tcol__price {
+  font-family: 'Italiana', serif;
+  font-size: 36px;
+  line-height: 1;
+  color: var(--moss-deep);
+  margin-bottom: 4px;
+}
+.tcol__price .unit {
+  font-family: 'Nanum Myeongjo', serif;
+  font-weight: 700;
+  font-size: 16px;
+  margin-left: 4px;
+}
+.tcol__unit-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.tcol__list {
+  list-style: none;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 13.5px;
+  line-height: 1.9;
+  color: var(--ink-2);
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.tcol__list li {
+  display: flex; gap: 10px;
+}
+.tcol__list li::before {
+  content: '·';
+  color: var(--clay);
+}
+
+/* ============ TESTIMONIALS ============ */
+.review__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 80px;
+  max-width: 1400px;
+}
+.review {
+  background: var(--bg-2);
+  padding: 36px 32px;
+  display: flex; flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+.review__quote-mark {
+  font-family: 'Italiana', serif;
+  font-size: 64px;
+  line-height: 0.6;
+  color: var(--clay);
+}
+.review__text {
+  font-family: 'Nanum Myeongjo', serif;
+  font-size: 15.5px;
+  line-height: 1.8;
+  color: var(--ink);
+}
+.review__author {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.review__name {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--moss-deep);
+}
+.review__meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+
+/* ============ FAQ ============ */
+.faq { background: var(--bg-2); }
+.faq__list {
+  margin-top: 70px;
+  max-width: 1100px;
+  border-top: 1px solid var(--ink);
+}
+.faq__item { border-bottom: 1px solid var(--line); cursor: pointer; }
+.faq__q {
+  display: grid;
+  grid-template-columns: 60px 1fr 30px;
+  gap: 24px;
+  padding: 28px 0;
+  align-items: center;
+  user-select: none;
+}
+.faq__num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--ink-3);
+}
+.faq__question {
+  font-family: 'Nanum Myeongjo', serif;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.015em;
+}
+.faq__plus {
+  font-family: 'Italiana', serif;
+  font-size: 24px;
+  color: var(--clay);
+  text-align: right;
+  transition: transform .4s;
+}
+.faq__item.open .faq__plus { transform: rotate(45deg); }
+.faq__a {
+  max-height: 0; overflow: hidden;
+  transition: max-height .45s ease, padding .45s ease;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--ink-2);
+  padding: 0 60px 0 84px;
+}
+.faq__item.open .faq__a { max-height: 360px; padding: 0 60px 28px 84px; }
+
+/* ============ VISIT ============ */
+.visit { background: var(--bg-3); color: var(--bg); padding: 130px 40px; }
+.visit .section-tag { color: rgba(244,238,226,0.55); }
+.visit .section-tag::before { background: #d4b896; }
+.visit .section-title em { color: #d4b896; }
+
+.visit__wrap {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 80px;
+  margin-top: 70px;
+  max-width: 1400px;
+  align-items: end;
+}
+.visit__address {
+  font-family: 'Nanum Myeongjo', serif;
+  font-size: 21px;
+  line-height: 1.85;
+  color: rgba(244,238,226,0.95);
+}
+.visit__address strong { display: block; margin-bottom: 12px; color: #d4b896; font-weight: 700; font-size: 17px; letter-spacing: 0.05em; }
+
+.visit__hours {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  line-height: 2;
+  color: rgba(244,238,226,0.85);
+}
+.visit__hours .day { color: #d4b896; }
+
+.visit__cta {
+  margin-top: 80px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(244,238,226,0.18);
+  display: flex; justify-content: space-between; align-items: end;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+.visit__cta-text {
+  font-family: 'Italiana', serif;
+  font-size: clamp(36px, 6vw, 80px);
+  line-height: 1;
+  letter-spacing: -0.005em;
+}
+.visit__cta-text em {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  color: #d4b896;
+}
+.visit__btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  padding: 22px 40px;
+  border: 1px solid var(--bg);
+  transition: all .3s;
+  white-space: nowrap;
+}
+.visit__btn:hover { background: var(--bg); color: var(--ink); }
+
+/* ============ FOOTER ============ */
+footer {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 50px 40px 32px;
+  font-family: 'Pretendard', sans-serif;
+}
+.foot__top {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(244,238,226,0.15);
+}
+.foot__brand {
+  font-family: 'Italiana', serif;
+  font-size: 32px;
+  letter-spacing: 0.05em;
+}
+.foot__brand small {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  margin-left: 10px;
+  vertical-align: 6px;
+  color: rgba(244,238,226,0.5);
+}
+.foot__social {
+  display: flex; gap: 28px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 17px;
+}
+.foot__social a { transition: color .3s; }
+.foot__social a:hover { color: var(--clay); }
+.foot__bottom {
+  padding-top: 24px;
+  display: flex; justify-content: space-between;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: rgba(244,238,226,0.45);
+}
+
+/* ============ REVEAL ============ */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+.reveal.in { opacity: 1; transform: none; }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 980px) {
+  .nav { padding: 16px 20px; }
+  .nav__links { display: none; }
+  section, .visit { padding: 80px 20px; }
+  .hero { grid-template-columns: 1fr; padding: 130px 20px 40px; gap: 40px; }
+  .hero__topbar { left: 20px; right: 20px; flex-wrap: wrap; gap: 8px; }
+  .hero__title .row.right { text-align: left; padding-right: 0; }
+  .hero__meta { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .band { padding: 56px 20px; }
+  .band__inner { grid-template-columns: 1fr; gap: 36px; }
+  .about__wrap { grid-template-columns: 1fr; gap: 40px; }
+  .about__visual { position: static; }
+  .about__credentials { grid-template-columns: 1fr 1fr; }
+  .classes__grid { grid-template-columns: 1fr; gap: 16px; }
+  .week { grid-template-columns: 60px 1fr; gap: 16px; padding: 24px 0; }
+  .week__num { font-size: 36px; }
+  .week__desc, .week__tag { grid-column: 1 / -1; padding-left: 76px; }
+  .week__tag { text-align: left; }
+  .inst__wrap { grid-template-columns: 1fr; gap: 40px; }
+  .inst__name { font-size: 56px; }
+  .gallery__grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 70px; }
+  .tile-1, .tile-2, .tile-3, .tile-4, .tile-5, .tile-6 { grid-column: span 1; grid-row: span 3; }
+  .tile-5 { grid-column: span 2; }
+  .tuition__intro { grid-template-columns: 1fr; gap: 30px; }
+  .tuition__grid { grid-template-columns: 1fr 1fr; }
+  .tuition__col { border-right: 1px solid var(--line); padding: 32px 24px; }
+  .tuition__col:nth-child(2n) { border-right: none; }
+  .tuition__col:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .review__grid { grid-template-columns: 1fr; }
+  .visit__wrap { grid-template-columns: 1fr; gap: 40px; }
+  .faq__q { grid-template-columns: 40px 1fr 24px; gap: 12px; }
+  .faq__question { font-size: 16px; }
+  .faq__a, .faq__item.open .faq__a { padding-left: 52px; padding-right: 0; }
+  .foot__top { flex-direction: column; gap: 20px; align-items: flex-start; }
+  .foot__bottom { flex-direction: column; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__logo">toneart<small>EST.2011</small></div>
+  <div class="nav__links">
+    <a href="#about">소개</a>
+    <a href="#classes">클래스</a>
+    <a href="#curriculum">커리큘럼</a>
+    <a href="#tuition">수강료</a>
+    <a href="#visit">오시는 길</a>
+  </div>
+  <a href="#visit" class="nav__cta">문의하기 →</a>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero__topbar">
+    <div>FLOWER CLASS · 2026 SPRING ENROLLMENT</div>
+    <div>STUDIO TONEART · SINCE 2011</div>
+  </div>
+
+  <h1 class="hero__title">
+    <span class="row">Still</span>
+    <span class="row right">life, <span class="amp">with</span></span>
+    <span class="row">flowers.</span>
+    <span class="small">— 꽃을 회화처럼 다루는, 톤아트의 플라워 클래스</span>
+  </h1>
+
+  <div class="hero__right">
+    <div class="hero__plate">
+      <svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice">
+        <!-- abstract still-life: vase + flowers -->
+        <defs>
+          <radialGradient id="vase" cx="50%" cy="60%" r="40%">
+            <stop offset="0%" stop-color="#3e352a" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#1c1a16" stop-opacity="0.85"/>
+          </radialGradient>
+        </defs>
+        <!-- stems -->
+        <path d="M150 240 Q145 180 130 110" stroke="#3e4a32" stroke-width="2" fill="none" opacity="0.7"/>
+        <path d="M150 240 Q155 170 175 90" stroke="#3e4a32" stroke-width="2" fill="none" opacity="0.7"/>
+        <path d="M150 240 Q140 200 100 160" stroke="#3e4a32" stroke-width="1.8" fill="none" opacity="0.6"/>
+        <path d="M150 240 Q160 200 200 170" stroke="#3e4a32" stroke-width="1.8" fill="none" opacity="0.6"/>
+        <!-- leaves -->
+        <ellipse cx="120" cy="170" rx="18" ry="6" fill="#5a6b4a" opacity="0.7" transform="rotate(-30 120 170)"/>
+        <ellipse cx="180" cy="155" rx="20" ry="7" fill="#5a6b4a" opacity="0.65" transform="rotate(40 180 155)"/>
+        <ellipse cx="110" cy="200" rx="14" ry="5" fill="#3e4a32" opacity="0.7" transform="rotate(-20 110 200)"/>
+        <!-- blooms -->
+        <circle cx="130" cy="108" r="22" fill="#a85d44" opacity="0.85"/>
+        <circle cx="130" cy="108" r="14" fill="#7d4231" opacity="0.7"/>
+        <circle cx="175" cy="92" r="16" fill="#c98869" opacity="0.85"/>
+        <circle cx="175" cy="92" r="9" fill="#a85d44" opacity="0.7"/>
+        <circle cx="100" cy="160" r="11" fill="#d4b896" opacity="0.9"/>
+        <circle cx="200" cy="170" r="13" fill="#a85d44" opacity="0.7"/>
+        <!-- vase -->
+        <path d="M125 240 L175 240 L182 320 Q180 340 150 340 Q120 340 118 320 Z" fill="url(#vase)"/>
+        <!-- table line -->
+        <line x1="0" y1="340" x2="300" y2="340" stroke="#1c1a16" stroke-width="0.8" opacity="0.3"/>
+      </svg>
+      <div class="hero__plate__caption">Plate I · Composition in autumn</div>
+    </div>
+    <p class="hero__lead">
+      회화를 전공하고 꽃을 다룬 지 <strong>8년.</strong><br>
+      한 송이의 색감과 형태를 정물화처럼 읽고,<br>
+      손에 익은 감각으로 옮기는 시간을 함께합니다.
+    </p>
+  </div>
+
+  <div class="hero__meta">
+    <div>
+      <div class="meta-item__label">Founded</div>
+      <div class="meta-item__value"><em>2011</em>15년차 스튜디오</div>
+    </div>
+    <div>
+      <div class="meta-item__label">Programs</div>
+      <div class="meta-item__value"><em>04</em>정규·원데이·비즈·출강</div>
+    </div>
+    <div>
+      <div class="meta-item__label">Class Size</div>
+      <div class="meta-item__value"><em>1:4</em>소규모 진행</div>
+    </div>
+    <div>
+      <div class="meta-item__label">Location</div>
+      <div class="meta-item__value"><em>—</em>서울 (스튜디오)</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STILL LIFE BAND ============ -->
+<div class="band">
+  <div class="band__inner">
+    <div class="band__quote">
+      Every <em>arrangement</em> is<br>
+      a small <em>still-life painting.</em>
+    </div>
+    <div class="band__byline">
+      예쁘게 꽂는 법이 아니라, 한 송이 한 송이를<br>
+      어떤 톤으로 어떻게 놓을지를 함께 고민합니다.<br>
+      회화의 구도와 색채를 꽃의 언어로 옮기는<br>
+      — 톤아트가 생각하는 플라워 클래스.
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABOUT ============ -->
+<section id="about">
+  <div class="section-tag">01 / About the Studio</div>
+  <h2 class="section-title">15년의 작업,<br><em>8년의 꽃.</em></h2>
+
+  <div class="about__wrap">
+    <div class="about__visual reveal"></div>
+    <div class="about__text reveal">
+      <p>톤아트(toneart)는 2011년 시작한 작은 스튜디오입니다. 서양화·동양화·조각을 두루 다루던 시간을 거쳐, 2018년부터 꽃을 본격적인 소재로 옮겨오게 되었습니다.</p>
+      <p>한 송이의 색조(tone)와 형태(form)를 회화의 언어로 읽는 일 — 이것이 톤아트가 꽃을 다루는 방식입니다. 같은 장미라도 어떤 톤의 어떤 곁꽃과 만나느냐에 따라 전혀 다른 작품이 됩니다.</p>
+      <span class="pull">"잘 꽂은 꽃은 잘 그려진 정물화와 닮아 있다.<br>구도와 색, 빈자리의 균형."</span>
+      <p>현재 톤아트는 정규 클래스, 원데이 클래스, 1인 플로리스트를 위한 비즈니스 클래스, 그리고 기업·기관 출강을 중심으로 운영하고 있습니다. 정원은 회당 최대 4명. 손에 닿는 거리에서 한 분 한 분의 색감을 잡아 드리기 위한 규모입니다.</p>
+
+      <div class="about__credentials">
+        <div>
+          <div class="cred__num">15</div>
+          <div class="cred__label">Years · 스튜디오 운영</div>
+        </div>
+        <div>
+          <div class="cred__num">08</div>
+          <div class="cred__label">Years · 플라워 작업</div>
+        </div>
+        <div>
+          <div class="cred__num">200+</div>
+          <div class="cred__label">함께한 수강생</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLASSES ============ -->
+<section id="classes" class="classes">
+  <div class="section-tag">02 / Programs</div>
+  <h2 class="section-title">네 갈래의<br><em>수업.</em></h2>
+
+  <div class="classes__grid">
+    <div class="class-card reveal">
+      <div class="class-card__num">I</div>
+      <div class="class-card__kicker">Regular · 정규반</div>
+      <h3 class="class-card__title">Foundation</h3>
+      <div class="class-card__title-kr">기초 · 8주 과정</div>
+      <p class="class-card__desc">꽃을 처음 다루시는 분께. 손질·컬러 조합·구도·바인딩까지, 한 작품을 스스로 완성하는 데 필요한 모든 흐름을 8주 안에 익힙니다. 매주 다른 주제·다른 꽃 소재로 진행합니다.</p>
+      <div class="class-card__meta">
+        <div>
+          <div class="meta-cell__label">기간</div>
+          <div class="meta-cell__value">8주 · 주 1회 2.5h</div>
+        </div>
+        <div>
+          <div class="meta-cell__label">정원</div>
+          <div class="meta-cell__value">최대 4명</div>
+        </div>
+        <div>
+          <div class="meta-cell__label">대상</div>
+          <div class="meta-cell__value">전 단계 입문자</div>
+        </div>
+        <div>
+          <div class="meta-cell__label">결과물</div>
+          <div class="meta-cell__value">8개 작품 + 포트폴리오 촬영</div>
+        </div>
+      </div>
+      <a href="#tuition" class="class-card__cta">자세히 보기 →</a>
+    </div>
+
+    <div class="class-card reveal">
+      <div class="class-card__num">II</div>
+      <div class="class-card__kicker">One-day · 원데이</div>
+      <h3 class="class-card__title">Season</h3>
+      <div class="class-card__title-kr">계절별 원데이</div>
+      <p class="class-card__desc">한 회로 마무리되는 단발 수업. 매달 한 가지 주제를 정해 — 봄의 라넌큘러스 부케, 여름의 라이스플라워 리스, 가을의 드라이 작품 등 — 그 달의 가장 좋은 꽃을 다룹니다.</p>
+      <div class="class-card__meta">
+        <div>
+          <div class="meta-cell__label">기간</div>
+          <div class="meta-cell__value">1회 · 약 2시간</div>
+        </div>
+        <div>
+          <div class="meta-cell__label">정원</div>
+          <div class="meta-cell__value">최대 4명</div>
+        </div>
+        <div>
+          <div class="meta-cell__label">대상</div>
+          <div class="meta-cell__value">누구나</div>
+        </div>
+        <div>
+          <div class="meta-cell__label">결과물</div>
+          <div class="meta-cell__value">완성 작품 1점</div>
+        </div>
+      </div>
+      <a href="#tuition" class="class-card__cta">자세히 보기 →</a>
+    </div>
+
+    <div class="class-card reveal">
+      <div class="class-card__num">III</div>
+      <div class="class-card__kicker">Business · 비즈니스반</div>
+      <h3 class="class-card__title">Atelier</h3>
+      <div class="class-card__title-kr">1인 플로리스트 창업반</div>
+      <p class="class-card__desc">8주 정규반 수료자 또는 동등 경력자 대상. 상품 단가 산출, 시즌 메뉴 설계, 사진·SNS 운영, 출강 단가표 — 8년치 시행착오를 함께 정리해 드리는 실무 중심 수업입니다.</p>
+      <div class="class-card__meta">
+        <div>
+          <div class="meta-cell__label">기간</div>
+          <div class="meta-cell__value">6주 · 주 1회 3h</div>
+        </div>
+        <div>
+          <div class="meta-cell__label">정원</div>
+          <div class="meta-cell__value">최대 3명</div>
+        </div>
+        <div>
+          <div class="meta-cell__label">대상</div>
+          <div class="meta-cell__value">창업·전환 준비자</div>
+        </div>
+        <div>
+          <div class="meta-cell__label">결과물</div>
+          <div class="meta-cell__value">상품 라인 + 단가표</div>
+        </div>
+      </div>
+      <a href="#tuition" class="class-card__cta">자세히 보기 →</a>
+    </div>
+
+    <div class="class-card reveal">
+      <div class="class-card__num">IV</div>
+      <div class="class-card__kicker">On-site · 출강</div>
+      <h3 class="class-card__title">Off-site</h3>
+      <div class="class-card__title-kr">기업·단체·문화센터 출강</div>
+      <p class="class-card__desc">기업 임직원 워크숍, 백화점 문화센터, 학교·기관 외부 강의를 진행합니다. 인원·예산·공간에 맞춰 커리큘럼을 새로 설계해 드리며, 단발성·시리즈 모두 가능합니다.</p>
+      <div class="class-card__meta">
+        <div>
+          <div class="meta-cell__label">기간</div>
+          <div class="meta-cell__value">협의 · 2~3시간 기본</div>
+        </div>
+        <div>
+          <div class="meta-cell__label">정원</div>
+          <div class="meta-cell__value">10~30명 권장</div>
+        </div>
+        <div>
+          <div class="meta-cell__label">대상</div>
+          <div class="meta-cell__value">기업·단체·교육기관</div>
+        </div>
+        <div>
+          <div class="meta-cell__label">결과물</div>
+          <div class="meta-cell__value">인당 작품 1점</div>
+        </div>
+      </div>
+      <a href="#visit" class="class-card__cta">제안서 요청 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CURRICULUM ============ -->
+<section id="curriculum">
+  <div class="curriculum__intro">
+    <div class="section-tag">03 / Curriculum — Foundation 8 Weeks</div>
+    <div class="curriculum__head">
+      <h2 class="section-title">8주의<br><em>흐름.</em></h2>
+      <p class="curriculum__sub">— 도구를 잡는 첫날부터,<br>나만의 부케 한 작품까지.</p>
+    </div>
+  </div>
+
+  <div class="weeks">
+    <div class="week reveal">
+      <div class="week__num">01<span>WEEK ONE</span></div>
+      <div class="week__title">꽃과 도구를 잡는 법<em>Tools & Care</em></div>
+      <div class="week__desc">기본 도구·꽃 손질·물올림·줄기 다듬기. 첫 주는 손에 익히는 시간입니다.</div>
+      <div class="week__tag">실습 · 작은 컴포트</div>
+    </div>
+    <div class="week reveal">
+      <div class="week__num">02<span>WEEK TWO</span></div>
+      <div class="week__title">컬러 톤 읽기<em>Reading the Tones</em></div>
+      <div class="week__desc">단색·유사색·보색의 조합. 회화의 색채 이론을 꽃에 적용해 봅니다.</div>
+      <div class="week__tag">실습 · 톤온톤 부케</div>
+    </div>
+    <div class="week reveal">
+      <div class="week__num">03<span>WEEK THREE</span></div>
+      <div class="week__title">구도와 비례<em>Composition</em></div>
+      <div class="week__desc">중심·여백·삼각구도. 정물화의 구도법을 꽃다발에 옮기는 첫 주.</div>
+      <div class="week__tag">실습 · 라운드 부케</div>
+    </div>
+    <div class="week reveal">
+      <div class="week__num">04<span>WEEK FOUR</span></div>
+      <div class="week__title">바인딩과 마감<em>Binding</em></div>
+      <div class="week__desc">손에 익는 바인딩 포인트, 줄기의 흐름을 읽는 법. 부케의 완성도를 만드는 디테일.</div>
+      <div class="week__tag">실습 · 미디엄 부케</div>
+    </div>
+    <div class="week reveal">
+      <div class="week__num">05<span>WEEK FIVE</span></div>
+      <div class="week__title">계절을 담는 법<em>Seasonal Work</em></div>
+      <div class="week__desc">그 주에 가장 좋은 꽃을 골라 한 작품. 시장에서 좋은 꽃을 알아보는 안목까지.</div>
+      <div class="week__tag">실습 · 시즌 어레인지</div>
+    </div>
+    <div class="week reveal">
+      <div class="week__num">06<span>WEEK SIX</span></div>
+      <div class="week__title">화기와의 대화<em>Vase Work</em></div>
+      <div class="week__desc">유리·도자·놋·금속. 화기에 따라 달라지는 꽃의 표정과 균형 잡는 법.</div>
+      <div class="week__tag">실습 · 화기 어레인지</div>
+    </div>
+    <div class="week reveal">
+      <div class="week__num">07<span>WEEK SEVEN</span></div>
+      <div class="week__title">선물과 포장<em>Wrapping</em></div>
+      <div class="week__desc">포장지·리본 선택, 포장 마감의 톤 맞춤. 선물로 만드는 마지막 한 끗.</div>
+      <div class="week__tag">실습 · 선물 부케</div>
+    </div>
+    <div class="week reveal">
+      <div class="week__num">08<span>WEEK EIGHT</span></div>
+      <div class="week__title">나의 한 작품<em>Final Work</em></div>
+      <div class="week__desc">8주를 정리하는 자유 주제. 본인이 좋아하는 톤과 형태로 한 점을 완성하고 촬영합니다.</div>
+      <div class="week__tag">발표 · 포트폴리오 촬영</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INSTRUCTOR ============ -->
+<section id="instructor" class="instructor">
+  <div class="section-tag">04 / Instructor</div>
+  <h2 class="section-title">진행은<br><em>한 사람이.</em></h2>
+
+  <div class="inst__wrap">
+    <div class="inst__visual reveal"></div>
+    <div class="reveal">
+      <div class="inst__name">toneart.</div>
+      <div class="inst__role">Florist · Founder of toneart studio</div>
+      <div class="inst__bio">
+        <p>서양화와 동양화, 조각까지 — 회화 전공으로 시작해 톤아트를 15년째 운영하고 있습니다. 2018년부터는 꽃을 본격적인 작업 소재로 다루며, 클래스와 기업 출강을 중심으로 활동합니다.</p>
+        <p>'예쁘게 꽂는다'보다 '어떤 톤과 어떤 형태로 놓느냐'가 작품을 만든다고 믿습니다. 회화의 시선으로 꽃을 다루는 법을, 손에 닿는 거리에서 한 명 한 명에게 전해 드리는 일을 가장 좋아합니다.</p>
+      </div>
+      <div class="inst__history">
+        <div class="hist-item"><div class="hist-item__year">2026</div><div class="hist-item__text">정규반 · 원데이 · 비즈니스반 · 출강 운영</div></div>
+        <div class="hist-item"><div class="hist-item__year">2024</div><div class="hist-item__text">대기업 임직원 플라워 워크숍 다수 진행</div></div>
+        <div class="hist-item"><div class="hist-item__year">2022</div><div class="hist-item__text">백화점 문화센터 출강 시작</div></div>
+        <div class="hist-item"><div class="hist-item__year">2018</div><div class="hist-item__text">플라워 클래스 정규 운영 시작</div></div>
+        <div class="hist-item"><div class="hist-item__year">2011</div><div class="hist-item__text">톤아트 스튜디오 오픈 · 회화·조각 작업</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section id="gallery">
+  <div class="gallery__head">
+    <div>
+      <div class="section-tag">05 / Recent Works</div>
+      <h2 class="section-title">최근의<br><em>작업들.</em></h2>
+    </div>
+    <p class="gallery__caption">2025–2026 · 클래스 · 출강 ·<br>커미션 작업에서 선별한 일부.</p>
+  </div>
+
+  <div class="gallery__grid">
+    <div class="tile tile-1 reveal"><div class="tile__caption">001 · Autumn arrangement</div></div>
+    <div class="tile tile-2 reveal"><div class="tile__caption">002 · Tone on tone</div></div>
+    <div class="tile tile-3 reveal"><div class="tile__caption">003 · Dried · winter</div></div>
+    <div class="tile tile-4 reveal"><div class="tile__caption">004 · Bridal bouquet</div></div>
+    <div class="tile tile-5 reveal"><div class="tile__caption">005 · Corporate workshop</div></div>
+    <div class="tile tile-6 reveal"><div class="tile__caption">006 · Spring season</div></div>
+  </div>
+</section>
+
+<!-- ============ TUITION ============ -->
+<section id="tuition" class="tuition">
+  <div class="section-tag">06 / Tuition</div>
+  <div class="tuition__intro">
+    <h2 class="section-title">수강료와<br><em>일정.</em></h2>
+    <p class="tuition__note">
+      <strong>재료비는 수강료에 모두 포함</strong>되어 있으며, 매 회 그날의 꽃과 부자재로 진행됩니다. 정규반은 분기별로 모집하며, 원데이는 매월 1회 운영합니다. 자세한 모집 일정은 인스타그램으로 공지됩니다.
+    </p>
+  </div>
+
+  <div class="tuition__grid">
+    <div class="tuition__col reveal">
+      <div class="tcol__kicker">Program I</div>
+      <div class="tcol__title">Foundation</div>
+      <div class="tcol__title-kr">정규반 8주</div>
+      <div class="tcol__price">680,000<span class="unit">원</span></div>
+      <div class="tcol__unit-label">전 과정 · 재료비 포함</div>
+      <ul class="tcol__list">
+        <li>주 1회 · 2.5시간</li>
+        <li>최대 4인 소규모</li>
+        <li>8개 작품 + 촬영본</li>
+      </ul>
+    </div>
+    <div class="tuition__col reveal">
+      <div class="tcol__kicker">Program II</div>
+      <div class="tcol__title">Season</div>
+      <div class="tcol__title-kr">원데이 클래스</div>
+      <div class="tcol__price">95,000<span class="unit">원</span></div>
+      <div class="tcol__unit-label">1회 · 재료비 포함</div>
+      <ul class="tcol__list">
+        <li>매월 1회 진행</li>
+        <li>약 2시간 소요</li>
+        <li>완성 작품 1점</li>
+      </ul>
+    </div>
+    <div class="tuition__col reveal">
+      <div class="tcol__kicker">Program III</div>
+      <div class="tcol__title">Atelier</div>
+      <div class="tcol__title-kr">비즈니스 6주</div>
+      <div class="tcol__price">920,000<span class="unit">원</span></div>
+      <div class="tcol__unit-label">전 과정 · 재료비 포함</div>
+      <ul class="tcol__list">
+        <li>주 1회 · 3시간</li>
+        <li>최대 3인 소규모</li>
+        <li>창업 자료 패키지</li>
+      </ul>
+    </div>
+    <div class="tuition__col reveal">
+      <div class="tcol__kicker">Program IV</div>
+      <div class="tcol__title">Off-site</div>
+      <div class="tcol__title-kr">출강</div>
+      <div class="tcol__price">별도 협의</div>
+      <div class="tcol__unit-label">인원·시간에 따라 산정</div>
+      <ul class="tcol__list">
+        <li>기업·단체·문화센터</li>
+        <li>커리큘럼 맞춤 설계</li>
+        <li>제안서 별도 발송</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REVIEWS ============ -->
+<section id="reviews">
+  <div class="section-tag">07 / Voices</div>
+  <h2 class="section-title">먼저 다녀간<br><em>분들의 말.</em></h2>
+
+  <div class="review__grid">
+    <div class="review reveal">
+      <div class="review__quote-mark">"</div>
+      <p class="review__text">'예쁘게 꽂는 법'이 아니라, 꽃을 보는 시선 자체가 바뀌는 수업이었어요. 8주 후엔 시장에서 꽃을 고르는 눈이 완전히 달라져 있었습니다.</p>
+      <div class="review__author">
+        <span class="review__name">J. 정규반 수료</span>
+        <span class="review__meta">2025.SPRING</span>
+      </div>
+    </div>
+    <div class="review reveal">
+      <div class="review__quote-mark">"</div>
+      <p class="review__text">창업을 준비하면서 비즈니스반에 들어갔는데, 8년치 경험을 정말 가감 없이 풀어주셨어요. 단가표를 같이 잡아주신 것만으로도 본전 이상.</p>
+      <div class="review__author">
+        <span class="review__name">S. 비즈니스반 수료</span>
+        <span class="review__meta">2024.AUTUMN</span>
+      </div>
+    </div>
+    <div class="review reveal">
+      <div class="review__quote-mark">"</div>
+      <p class="review__text">회사 임직원 대상으로 출강을 부탁드렸는데, 처음 꽃을 만져보는 분들도 결과물이 정말 좋았습니다. 진행 매끄러움과 톤 잡으시는 감각이 인상적이었어요.</p>
+      <div class="review__author">
+        <span class="review__name">K. 기업 담당자</span>
+        <span class="review__meta">2024.WINTER</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq" class="faq">
+  <div class="section-tag">08 / FAQ</div>
+  <h2 class="section-title">자주 묻는<br><em>질문.</em></h2>
+
+  <div class="faq__list">
+    <div class="faq__item">
+      <div class="faq__q">
+        <span class="faq__num">Q.01</span>
+        <span class="faq__question">꽃을 한번도 만져본 적이 없는데 정규반 따라갈 수 있을까요?</span>
+        <span class="faq__plus">+</span>
+      </div>
+      <div class="faq__a">네, 정규반(Foundation)은 처음 꽃을 다루시는 분을 기준으로 설계된 과정입니다. 첫 주는 도구를 잡는 법과 손질부터 시작합니다. 손재주에 대한 걱정보다는, 매주 한 작품씩 차근차근 쌓아간다는 마음으로 오시면 충분합니다.</div>
+    </div>
+    <div class="faq__item">
+      <div class="faq__q">
+        <span class="faq__num">Q.02</span>
+        <span class="faq__question">재료비는 따로 내야 하나요?</span>
+        <span class="faq__plus">+</span>
+      </div>
+      <div class="faq__a">아니요, 모든 클래스의 수강료에는 재료비(꽃·부자재·포장)가 모두 포함되어 있습니다. 별도로 챙겨오실 것은 가위 정도(없으셔도 대여 가능)이고, 마무리한 작품은 그날 바로 가져가실 수 있게 포장해 드립니다.</div>
+    </div>
+    <div class="faq__item">
+      <div class="faq__q">
+        <span class="faq__num">Q.03</span>
+        <span class="faq__question">결석 시 보강이 가능한가요?</span>
+        <span class="faq__plus">+</span>
+      </div>
+      <div class="faq__a">정규반·비즈니스반에 한해 사전 연락 시 같은 기수의 다른 요일로 1회 한정 보강이 가능합니다. (해당 주차 잔여 좌석이 있을 때에 한합니다.) 무단 결석의 경우 보강은 어려운 점 양해 부탁드립니다.</div>
+    </div>
+    <div class="faq__item">
+      <div class="faq__q">
+        <span class="faq__num">Q.04</span>
+        <span class="faq__question">출강 의뢰는 어떻게 진행되나요?</span>
+        <span class="faq__plus">+</span>
+      </div>
+      <div class="faq__a">하단의 이메일 또는 인스타그램 DM으로 — 1) 인원, 2) 희망 날짜·시간, 3) 장소(지역), 4) 예산 범위, 5) 진행 목적(임직원 대상/문화센터/특강 등) 다섯 가지를 알려주시면, 1~2영업일 내 제안서로 회신드립니다.</div>
+    </div>
+    <div class="faq__item">
+      <div class="faq__q">
+        <span class="faq__num">Q.05</span>
+        <span class="faq__question">수강 신청은 어떻게 하나요?</span>
+        <span class="faq__plus">+</span>
+      </div>
+      <div class="faq__a">정규반·비즈니스반은 분기별 모집을 인스타그램(@toneart_studio)으로 공지하며, DM을 통해 신청받습니다. 원데이는 매월 초 일정 공지 후 선착순 마감입니다. 사전에 일정을 받아보고 싶으신 분은 메일로 알려주시면 메일링 명단에 추가해 드립니다.</div>
+    </div>
+    <div class="faq__item">
+      <div class="faq__q">
+        <span class="faq__num">Q.06</span>
+        <span class="faq__question">환불 규정이 어떻게 되나요?</span>
+        <span class="faq__plus">+</span>
+      </div>
+      <div class="faq__a">정규·비즈니스 과정은 시작 7일 전까지 전액 환불, 3일 전까지 70% 환불 가능합니다. 시작 후에는 진행 회차 차감 후 환불됩니다. 원데이 클래스는 재료를 미리 준비하는 특성상 시작 3일 전까지만 환불이 가능한 점 양해 부탁드립니다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VISIT ============ -->
+<section id="visit" class="visit">
+  <div class="section-tag">09 / Visit & Contact</div>
+  <h2 class="section-title">오시는 길,<br><em>그리고 연락.</em></h2>
+
+  <div class="visit__wrap">
+    <div class="visit__address">
+      <strong>STUDIO TONEART</strong>
+      서울특별시 ○○구 ○○로 ○○<br>
+      ○○빌딩 3F · 우 00000<br>
+      (방문은 사전 예약제로 운영됩니다)
+    </div>
+    <div class="visit__hours">
+      <div><span class="day">MON–FRI</span> &nbsp; 11:00 – 19:00</div>
+      <div><span class="day">SAT</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11:00 – 17:00</div>
+      <div><span class="day">SUN</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Closed</div>
+      <br>
+      <div>hello@toneart.studio</div>
+      <div>@toneart_studio</div>
+    </div>
+  </div>
+
+  <div class="visit__cta">
+    <div class="visit__cta-text">
+      A small <em>still-life,</em><br>
+      built by your <em>own hands.</em>
+    </div>
+    <a href="#" class="visit__btn">신청 · 문의 시작하기 →</a>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="foot__top">
+    <div class="foot__brand">toneart<small>EST.2011</small></div>
+    <div class="foot__social">
+      <a href="#">Instagram</a>
+      <a href="#">Email</a>
+      <a href="#">Naver Blog</a>
+    </div>
+  </div>
+  <div class="foot__bottom">
+    <div>© 2026 toneart studio. All rights reserved.</div>
+    <div>Flowers · Painted with hands, not with paint.</div>
+  </div>
+</footer>
+
+<script>
+// FAQ accordion
+document.querySelectorAll('.faq__item').forEach(item => {
+  item.addEventListener('click', () => item.classList.toggle('open'));
+});
+
+// Reveal on scroll
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
